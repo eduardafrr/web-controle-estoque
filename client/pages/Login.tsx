@@ -22,7 +22,7 @@ export default function Login() {
             </div>
           </div>
           <p className="max-w-md text-base text-muted-foreground">
-            Gestão de estoque com alma anos 60, inteligência artificial e foco total na cozinha profissional.
+            Gestão de estoque com praticidade, inteligência artificial e foco total na sua produtividade.
           </p>
           <div className="grid gap-4 rounded-3xl border border-border bg-card/60 p-6">
             <p className="text-xs font-semibold uppercase tracking-[0.4em] text-muted-foreground">Destaques</p>
@@ -37,7 +37,7 @@ export default function Login() {
         <section className="space-y-8">
           <div className="space-y-2">
             <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground">Acesse com o Google</p>
-            <h2 className="text-3xl font-semibold">Sua cozinha conectada em segundos</h2>
+            <h2 className="text-3xl font-semibold">Seu negócio conectado em segundos</h2>
           </div>
 
           <Button
@@ -45,12 +45,12 @@ export default function Login() {
             className="flex h-14 w-full items-center justify-center gap-4 rounded-full border border-border bg-background text-base font-semibold shadow-lg shadow-primary/20 transition hover:bg-card"
           >
             <GoogleGlyph />
-            Entrar com Google
+            <span className="text-blue-600">Entrar com Google</span>
           </Button>
 
           <div className="rounded-3xl border border-dashed border-secondary/50 bg-secondary/10 p-6 text-secondary">
             <p className="text-sm font-semibold">Novidade Vita60</p>
-            <p className="mt-2 text-sm text-secondary-foreground/80">
+            <p className="mt-2 text-sm">
               Conecte sua conta e receba recomendações de compra personalizadas direto no painel.
             </p>
           </div>
