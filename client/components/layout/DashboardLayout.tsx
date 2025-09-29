@@ -36,7 +36,7 @@ export function DashboardLayout({ title, description, action, children }: Dashbo
         <aside className="flex flex-col border-r border-border bg-gradient-to-b from-primary/15 via-secondary/10 to-card p-6">
           <div className="space-y-8">
             <div>
-              <p className="text-xs uppercase tracking-[0.3em] text-secondary-foreground/80">Vita60</p>
+              <p className="text-xs uppercase tracking-[0.3em] text-secondary-foreground/80">Estoque+</p>
               <h1 className="mt-2 text-2xl font-bold">Restaurante Aurora</h1>
               <p className="mt-1 text-sm text-muted-foreground">Gestão de compras e estoque retrô</p>
             </div>

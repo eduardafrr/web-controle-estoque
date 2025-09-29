@@ -14,11 +14,10 @@ export default function Login() {
         <section className="space-y-6">
           <div className="inline-flex items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-border bg-card text-2xl font-black text-primary">
-              V
+              E+
             </div>
             <div>
-              <p className="text-xs uppercase tracking-[0.5em] text-muted-foreground">Sistema Retro AI</p>
-              <h1 className="text-4xl font-bold tracking-tight text-primary md:text-5xl">Vita60</h1>
+              <h1 className="text-4xl font-bold tracking-tight text-primary md:text-5xl">Estoque+</h1>
             </div>
           </div>
           <p className="max-w-md text-base text-muted-foreground">
@@ -49,7 +48,7 @@ export default function Login() {
           </Button>
 
           <div className="rounded-3xl border border-dashed border-secondary/50 bg-secondary/10 p-6 text-secondary">
-            <p className="text-sm font-semibold">Novidade Vita60</p>
+            <p className="text-sm font-semibold">Novidade Estoque+</p>
             <p className="mt-2 text-sm">
               Conecte sua conta e receba recomendações de compra personalizadas direto no painel.
             </p>
