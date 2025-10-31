@@ -1,4 +1,6 @@
 import { useMemo, useState } from "react";
+import { ENDPOINTS } from "@/config";
+import { useEffect } from "react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import {
@@ -64,7 +66,7 @@ const CATEGORIES = ["Bebidas", "Laticínios", "Temperos", "Proteínas", "Hortifr
 const UNITS = ["KG", "UN", "L", "PCT", "CX"];
 
 export default function Products() {
-  const [products, setProducts] = useState<ProductRow[]>(INITIAL_PRODUCTS);
+  const [products, setProducts] = useState<ProductRow[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [form, setForm] = useState({
     name: "",
@@ -75,33 +77,101 @@ export default function Products() {
     active: true,
   });
 
+    const [categories, setCategories] = useState<{ id: string; nome: string }[]>([]);
+
+  useEffect(() => {
+    fetch(ENDPOINTS.categorias, { credentials: "include" })
+      .then((res) => res.json())
+      .then((data) => {
+        setCategories(Array.isArray(data) ? data.filter((cat) => cat.ativo).map((cat) => ({ id: cat.id, nome: cat.nome })) : []);
+      });
+
+  fetch(ENDPOINTS.produtos, { credentials: "include" })
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setProducts(
+            data.map((prod) => ({
+              id: prod.id,
+              name: prod.nome,
+              category: prod.categoriaId,
+              unit: prod.unidadeMedida !== undefined ? Object.keys(UNIT_MAP)[prod.unidadeMedida] : "UN",
+              minQty: prod.quantidadeMinima ?? 0,
+              margin: prod.margem ?? 0,
+              active: prod.ativo ?? true,
+              currentStock: prod.quantidade ?? 0,
+            }))
+          );
+        }
+      });
+  }, []);
+
   const criticalCount = useMemo(
     () =>
       products.filter((product) => product.currentStock < product.minQty && product.active).length,
     [products],
   );
 
-  const handleSubmit = () => {
+  const UNIT_MAP: Record<string, number> = {
+    UN: 0,
+    KG: 1,
+    L: 2,
+    PCT: 3,
+    CX: 4,
+    M: 5,
+  };
+
+  
+
+  const handleSubmit = async () => {
     if (!form.name.trim() || !form.category.trim()) {
       toast.error("Informe nome e categoria.");
       return;
     }
 
-    const newProduct: ProductRow = {
-      id: crypto.randomUUID(),
-      name: form.name.trim(),
-      category: form.category.trim(),
-      unit: form.unit,
-      minQty: Number(form.minQty) || 0,
-      margin: Number(form.margin) || 0,
-      active: form.active,
-      currentStock: 0,
+    const payload = {
+      nome: form.name.trim(),
+      descricao: "", 
+      unidadeMedida: UNIT_MAP[form.unit] ?? 0,
+      quantidade: 0,
+      quantidadeMinima: Number(form.minQty) || 0,
+      categoriaId: form.category,
     };
 
-    setProducts((prev) => [newProduct, ...prev]);
-    toast.success("Produto cadastrado com sucesso!");
-    setForm({ name: "", category: "", unit: "UN", minQty: "10", margin: "15", active: true });
-    setModalOpen(false);
+    try {
+      const res = await fetch(ENDPOINTS.novoProduto, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+        credentials: "include"
+      });
+      if (!res.ok) throw new Error("Erro ao cadastrar produto");
+      toast.success("Produto cadastrado com sucesso!");
+      setForm({ name: "", category: "", unit: "UN", minQty: "10", margin: "15", active: true });
+      setModalOpen(false);
+      // Atualiza lista de produtos após cadastro
+      fetch(ENDPOINTS.produtos, { credentials: "include" })
+        .then((res) => res.json())
+        .then((data) => {
+          if (Array.isArray(data)) {
+            setProducts(
+              data.map((prod) => ({
+                id: prod.id,
+                name: prod.nome,
+                category: prod.categoriaId,
+                unit: prod.unidadeMedida !== undefined ? Object.keys(UNIT_MAP)[prod.unidadeMedida] : "UN",
+                minQty: prod.quantidadeMinima ?? 0,
+                margin: prod.margem ?? 0,
+                active: prod.ativo ?? true,
+                currentStock: prod.quantidade ?? 0,
+              }))
+            );
+          }
+        });
+    } catch (err) {
+      toast.error("Erro ao cadastrar produto");
+      categoriaId: form.category
+    }
   };
 
   const toggleActive = (id: string, value: boolean) => {
@@ -149,11 +219,15 @@ export default function Products() {
                       <SelectValue placeholder="Escolha uma categoria" />
                     </SelectTrigger>
                     <SelectContent>
-                      {CATEGORIES.map((category) => (
-                        <SelectItem key={category} value={category}>
-                          {category}
-                        </SelectItem>
-                      ))}
+                      {categories.length === 0 ? (
+                        <div className="px-4 py-2 text-muted-foreground">Nenhuma categoria cadastrada</div>
+                      ) : (
+                        categories.map((cat) => (
+                          <SelectItem key={cat.id} value={cat.id}>
+                            {cat.nome}
+                          </SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
@@ -262,7 +336,7 @@ export default function Products() {
                       <p className="font-semibold">{product.name}</p>
                       <p className="text-xs text-muted-foreground">ID {product.id.slice(0, 6).toUpperCase()}</p>
                     </td>
-                    <td className="px-6 py-4">{product.category}</td>
+                      <td className="px-6 py-4">{categories.find(cat => cat.id === product.category)?.nome || product.category}</td>
                     <td className="px-6 py-4">{product.unit}</td>
                     <td className="px-6 py-4">{product.minQty}</td>
                     <td className="px-6 py-4">{product.margin}%</td>
