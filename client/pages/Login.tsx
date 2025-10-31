@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { GOOGLE_LOGIN_URL } from "@/config";
 
 export default function Login() {
   // const navigate = useNavigate();
 
   const handleGoogleLogin = () => {
-    window.location.href = "https://localhost:44322/auth/login";
+    window.location.href = GOOGLE_LOGIN_URL;
   };
 
   return (

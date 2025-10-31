@@ -2,6 +2,7 @@ import { ReactNode, useMemo } from "react";
 import { NavLink } from "react-router-dom";
 import { BarChart3, Box, Layers, LogOut, PackageSearch } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LOGOUT_URL } from "@/config";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
@@ -73,8 +74,16 @@ export function DashboardLayout({ title, description, action, children }: Dashbo
             <Button
               variant="outline"
               className="justify-center gap-2 border-border text-secondary-foreground"
-              onClick={() => {
-                window.location.href = "https://localhost:44322/auth/logout";
+              onClick={async () => {
+                try {
+                  await fetch(LOGOUT_URL, {
+                    method: "POST",
+                    credentials: "include"
+                  });
+                  window.location.href = "/login";
+                } catch (err) {
+                  alert("Erro ao fazer logout");
+                }
               }}
             >
               <LogOut className="h-4 w-4" /> Sair
